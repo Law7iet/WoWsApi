@@ -2,11 +2,11 @@ import json
 
 import requests
 
-from urls import URL_ROOT, PLAYERS, PLAYER_CLAN_DATA, WARSHIPS, CLANS, CLANS_DETAIL, CB_RANKING
-from utils import ShipType, is_debugging, check_data, clear_dict_to_list
+from api.wows.urls import URL_ROOT, PLAYERS, PLAYER_CLAN_DATA, WARSHIPS, CLANS, CLANS_DETAIL, CB_RANKING
+from api.wows.utils import ShipType, check_data, clear_dict_to_list
 
 
-def cb_ranking(clan_id: int) -> list:
+def cb_ranking(clan_id: int, debugging: bool) -> list:
     """
     Returns the ratings of a clan.
     The ratings are divided by `season_number`.
@@ -15,12 +15,13 @@ def cb_ranking(clan_id: int) -> list:
 
     Args:
         clan_id: the clan ID.
+        debugging: a value that states if it's debugging
 
     Returns:
         the list of ratings.
     """
     url = CB_RANKING + str(clan_id) + "/claninfo/"
-    if is_debugging():
+    if debugging:
         print(url)
     try:
         # api call
@@ -31,8 +32,9 @@ def cb_ranking(clan_id: int) -> list:
 
 
 class WoWsSession:
-    def __init__(self, application_id: str):
+    def __init__(self, application_id: str, debugging: bool):
         self.app_id = application_id
+        self.debugging = debugging
 
     def players(self, search: str) -> list:
         """
@@ -53,7 +55,7 @@ class WoWsSession:
             print("search has whitespace")
             return []
         url = URL_ROOT + PLAYERS + "?application_id=" + self.app_id + "&search=" + search
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)
@@ -83,7 +85,7 @@ class WoWsSession:
         if access_token:
             # TODO manage access_token to get private's data
             print(access_token)
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)
@@ -109,7 +111,7 @@ class WoWsSession:
             url = url + "&ship_id=" + "%2C+".join(str(x) for x in ships_id)
         if types:
             url = url + "&type=" + "%2C+".join(types)
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)
@@ -133,7 +135,7 @@ class WoWsSession:
         url = URL_ROOT + CLANS + "?application_id=" + self.app_id
         if search:
             url = url + "&search=" + search
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)
@@ -159,7 +161,7 @@ class WoWsSession:
         else:
             print("Empty input")
             return []
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)
@@ -185,7 +187,7 @@ class WoWsSession:
         else:
             print("empty input")
             return []
-        if is_debugging():
+        if self.debugging:
             print(url)
         try:
             data = check_data(url)

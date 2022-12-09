@@ -1,4 +1,3 @@
-import sys
 from enum import Enum
 
 import requests
@@ -9,13 +8,6 @@ class ShipType(str, Enum):
     CA = "Cruiser"
     BB = "Battleship"
     CV = "AirCarrier"
-
-
-def is_debugging() -> bool:
-    if sys.gettrace() is None:
-        return False
-    else:
-        return True
 
 
 def check_data(url: str) -> dict:
